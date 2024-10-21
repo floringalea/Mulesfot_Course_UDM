@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="basics" doc:id="87190464-1724-4985-b05e-707ab5d2a198" >
+		<http:listener doc:name="HTTP GET basics" doc:id="a43a11eb-9c54-4c9e-b0df-1c4ec1a3e05a" config-ref="HTTP_Listener_config" path="/basics/*" allowedMethods="GET">
+			<http:response >
+				<http:body ><![CDATA[#[vars.requestResponse]]]></http:body>
+			</http:response>
+		</http:listener>
+		<logger level="INFO" doc:name="Log START" doc:id="19dc3320-b930-4938-9558-848223e948d8" message='#["log START - " ++ flow.name]'/>
+		<set-payload value='#["this is the basic flow payload"]' doc:name="Set Payload" doc:id="9c53987d-fe24-4588-8c37-2d66efde10d2" />
+		<set-variable value="#[{&#10;	'param1' : 'value1',&#10;	'param2' : '',&#10;	'param3' : 'value3'&#10;}]" doc:name="Set Query Params" doc:id="a0cd2655-e23d-4281-bc93-46e0b76acc9d" variableName="customMap"/>
+		<http:request method="GET" doc:name="Request" doc:id="1e4f19ed-b699-4e9c-910b-f6a57e883233" config-ref="HTTP_Request_configuration" path="/queryParams" target="requestResponse">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	('k1': vars.customMap.param1) if (vars.customMap.param1 != null and vars.customMap.param1 != ''),
+	('k2': vars.customMap.param2) if (vars.customMap.param2 != null and vars.customMap.param2 != ''),
+	('k3': vars.customMap.param3) if (vars.customMap.param3 != null and vars.customMap.param3 != '')
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Log END" doc:id="c2608a81-7cd1-4335-9820-ca093654a8d8" message='#["log END - " ++ flow.name]'/>
+	</flow>
+	<flow name="uriParams" doc:id="d24422c9-d236-4071-8d69-2a9f94b5b57a" >
+		<http:listener doc:name="HTTPGET" doc:id="68e47ef9-0d01-47df-8759-3bba2cb7de09" config-ref="HTTP_Listener_config" path="/uriParams/{id}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Log START" doc:id="975e3dff-7b20-4911-9286-ac0f6a9e5552" message='#["Log START - " ++ flow.name]' />
+		<set-payload value='#[attributes.uriParams."ID"]' doc:name="Set Payload" doc:id="ad05a4d5-6f58-4f0a-8102-f925265d7fae" />
+	</flow>
+	<flow name="http_connectorFlow" doc:id="8b8e5036-a08e-4e6e-ab46-c81cc0cbac55" >
+		<http:listener doc:name="HTTP GET" doc:id="60396ffc-3fcf-4461-bc5b-d9e00ba5c886" config-ref="HTTP_Listener_config" path="/queryParams" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Log START" doc:id="233c0257-5efc-46a4-b635-469e784872f6" message='#["log START - " ++ flow.name]'/>
+		<set-payload value="#[%dw 2.0&#10;&#10;output application/json&#10;---&#10;&#10;attributes.queryParams]" doc:name="Set Payload" doc:id="3a2fbcd1-a734-45b7-bb94-3d10b255e6bc" />
+	</flow>
+</mule>
