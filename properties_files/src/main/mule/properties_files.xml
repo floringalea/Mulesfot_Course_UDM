@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4541fb5a-dea5-48ca-b920-c83bbba13432" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="107305be-41a3-4b4a-a7c3-2f125fdd317d" file="common.yaml" doc:description="Common configuration properties"/>
+	<configuration-properties doc:name="Configuration properties" doc:id="1c59085a-7dde-4565-859b-46f59ac6002e" doc:description="Dynamic configuration property file" file="config-${environment}.yaml" />
+	<global-property doc:name="Global Property" doc:id="f3795a84-d4fc-4339-8c5d-c3f5ec05928c" name="environment" value="dev" />
+	<!--flow name="properties_files_basic" doc:id="c83ba284-0fc0-4580-8cb8-b6f3a56b9713" >
+		<http:listener doc:name="HTTP GET" doc:id="ecb9aa46-b987-434a-bc30-9134a70b7173" config-ref="HTTP_Listener_config" path="${http.path}"/>
+		<logger level="INFO" doc:name="Log START" doc:id="ad490127-b085-4f93-ab60-ce316cddd67b" message="${myMessage}"/>
+		<set-payload value="${myMessage}" doc:name="Set Payload" doc:id="08bfd808-0426-46df-ac31-947beaa9b03e" />
+	</flow-->
+	<flow name="properties_files_dynamic" doc:id="c2c35b41-f752-4a29-8717-0a464378f183" >
+		<http:listener doc:name="HTTP GET" doc:id="e0971994-8a5f-43d8-961a-3a2cc59b0e68" config-ref="HTTP_Listener_config" path="${http.path}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6adb3997-a4ab-47b4-8f74-6c7535a8e6ec" message='#[%dw 2.0&#10;&#10;output application/json&#10;---&#10;{&#10;	"message": Mule::p("myMessage")&#10;}]'/>
+		<set-payload value='#[%dw 2.0&#10;&#10;output application/json&#10;---&#10;{&#10;	"message": Mule::p("myMessage")&#10;}]' doc:name="Set Payload" doc:id="63285adc-d250-4607-b0f5-7a65e4beb1e0" />
+	</flow>
+</mule>
