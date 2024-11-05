@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cluster="http://www.mulesoft.org/schema/mule/ee/cluster" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b98342c4-5d1d-472d-b74e-ebf465caeb9f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="864d011b-7107-4d14-93c7-eea5a8c6719d" >
+		<http:request-connection host="localhost" port="8881" />
+	</http:request-config>
+	<configuration doc:name="Configuration" doc:id="ff55791a-5cb2-476e-9053-3c91be31bf81" doc:description="Note for later reference" defaultErrorHandler-ref="mule_global_error_handler" >
+	</configuration>
+	<error-handler name="mule_global_error_handler" doc:id="538bd8f8-d14b-4c64-8405-048f1fde4a5b" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f611d19a-387c-4fa4-91c8-b53f1b40dfe0" type="ANY">
+			<logger level="INFO" doc:name="Log on error propagate" doc:id="45e5f7be-9ad8-4abf-b99f-3bbef229cb13" message='#["On error propagate global element"]' />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"message": "on error propagate from global element"&#10;}]' doc:name="Set Payload on Error Propagate" doc:id="f65e0653-d154-4452-b9fb-f89c83749578" />
+		</on-error-propagate>
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9d05cc4d-8e19-4bf5-9c54-ae237cd2cf74" type="ANY">
+			<logger level="ERROR" doc:name="Log on error continue" doc:id="77791b48-eff6-4429-a2a9-92f053dcec54" message='#["On error continue global element"]' />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"message": "on error continue from global element"&#10;}]' doc:name="Set Payload on Error Continue" doc:id="264b7fb6-4cc5-4004-88b8-50804c115965" />
+		</on-error-continue>
+	</error-handler>
+</mule>
